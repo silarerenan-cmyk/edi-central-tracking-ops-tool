@@ -17,48 +17,59 @@
 </head>
 <body>
 
-  <!-- BEES Top bar (custom, modeled on the BEES Order history reference) -->
-  <header class="bees-topbar">
-    <div class="bees-topbar-row bees-topbar-row--primary">
-      <a class="bees-logo" href="#orders" aria-label="BEES home" data-track="nav-logo">
-        <img src="_shared/img/bees-logo.png" alt="BEES" />
-      </a>
-      <div class="bees-search">
-        <hexa-icon name="SearchIcon"></hexa-icon>
-        <input type="search" placeholder="Search orders, POC, SKU, PO…" data-track="topbar-search" aria-label="Search orders" />
-        <button class="bees-search-go" aria-label="Search" data-track="topbar-search-submit"><hexa-icon name="SearchIcon"></hexa-icon></button>
+  <!-- BEES one shell: icon rail + compact header (Commercial control reference) -->
+  <div class="bees-one-app" data-track="layout-bees-one">
+    <aside class="bees-one-rail" aria-label="Module navigation">
+      <div class="bees-one-rail__stack">
+        <a href="#orders" class="bees-one-rail__link" data-track="rail-home" title="Home">
+          <hexa-icon name="HomeIcon"></hexa-icon>
+        </a>
+        <a href="#" class="bees-one-rail__link" data-track="rail-catalog" title="Catalog" onclick="event.preventDefault()">
+          <hexa-icon name="GridIcon"></hexa-icon>
+        </a>
+        <a href="#orders" class="bees-one-rail__link" id="railNavEdi" data-track="rail-commercial" title="Commercial · EDI order control">
+          <hexa-icon name="UserFocusIcon"></hexa-icon>
+        </a>
+        <a href="#" class="bees-one-rail__link" data-track="rail-deliveries" title="Deliveries" onclick="event.preventDefault()">
+          <hexa-icon name="TruckIcon"></hexa-icon>
+        </a>
+        <a href="#" class="bees-one-rail__link" data-track="rail-accounts" title="Accounts" onclick="event.preventDefault()">
+          <hexa-icon name="BuildingIcon"></hexa-icon>
+        </a>
+        <a href="#health" class="bees-one-rail__link" id="railNavHealth" data-track="rail-health" title="Insights">
+          <hexa-icon name="BarChartIcon"></hexa-icon>
+        </a>
       </div>
-      <div class="bees-account">
-        <hexa-icon name="StoreIcon"></hexa-icon>
-        <span class="bees-account-id">AMBEV</span>
-        <span class="bees-account-name">Vendor operations · All POCs</span>
-        <hexa-icon name="ChevronDownIcon"></hexa-icon>
+      <div class="bees-one-rail__spacer" aria-hidden="true"></div>
+      <div class="bees-one-rail__bottom">
+        <a href="#" class="bees-one-rail__link" data-track="rail-settings" title="Settings" onclick="event.preventDefault()">
+          <hexa-icon name="UserSettingsIcon"></hexa-icon>
+        </a>
       </div>
-      <div class="bees-topbar-actions">
-        <button class="bees-icon-btn" aria-label="Account" data-track="topbar-account"><hexa-icon name="UserIcon"></hexa-icon></button>
-        <button class="bees-icon-btn" aria-label="Notifications" data-track="topbar-notifications" style="position:relative">
-          <hexa-icon name="BellIcon"></hexa-icon>
-        </button>
-        <button class="bees-icon-btn" aria-label="Cart" data-track="topbar-cart" style="position:relative">
-          <hexa-icon name="CartIcon"></hexa-icon>
-          <span class="bees-icon-badge">5</span>
-        </button>
-      </div>
-    </div>
-    <nav class="bees-topbar-row bees-topbar-row--secondary" aria-label="Primary">
-      <div class="bees-nav-left">
-        <a href="#" data-track="nav-categories" class="bees-nav-link">Product categories <hexa-icon name="ChevronDownIcon"></hexa-icon></a>
-        <a href="#" data-track="nav-order"      class="bees-nav-link">Order <hexa-icon name="ChevronDownIcon"></hexa-icon></a>
-        <a href="#" data-track="nav-commercial" class="bees-nav-link">Commercial management <hexa-icon name="ChevronDownIcon"></hexa-icon></a>
-        <a href="#" data-track="nav-payments"   class="bees-nav-link">Payments</a>
-      </div>
-      <div class="bees-nav-right">
-        <a href="#" data-track="nav-help"    class="bees-nav-link">Help &amp; Support</a>
-        <a href="#orders" data-track="nav-ops-queue" id="navOrdersLink" class="bees-nav-link bees-nav-link--active">EDI Central Tracking — Ops</a>
-        <a href="#health" data-track="nav-ops-health" id="navHealthLink" class="bees-nav-link">Operational health</a>
-      </div>
-    </nav>
-  </header>
+    </aside>
+
+    <div class="bees-one-main-col">
+      <header class="bees-topbar bees-topbar--one">
+        <div class="bees-topbar-inner">
+          <button type="button" class="bees-toolbar-btn" aria-label="Tools menu" data-track="topbar-tools" aria-haspopup="true">
+            <hexa-icon name="MenuIcon"></hexa-icon>
+          </button>
+          <a class="bees-one-brand" href="#orders" aria-label="BEES one home" data-track="nav-logo">
+            <span class="bees-one-brand__mark">
+              <img src="_shared/img/bees-logo.png" alt="" width="80" height="26" />
+            </span>
+            <span class="bees-one-brand__product">one</span>
+          </a>
+          <span class="bees-topbar-spacer" aria-hidden="true"></span>
+          <button type="button" class="bees-toolbar-btn" aria-label="Notifications" data-track="topbar-notifications">
+            <hexa-icon name="BellIcon"></hexa-icon>
+          </button>
+          <button type="button" class="bees-user-chip" aria-label="User menu" data-track="topbar-user">
+            <span class="bees-user-chip__avatar" aria-hidden="true">V</span>
+            <hexa-icon name="ChevronDownIcon"></hexa-icon>
+          </button>
+        </div>
+      </header>
 
   <main class="app-shell">
 
@@ -353,6 +364,9 @@
       <a href="#" class="bees-footer-cookie" data-track="footer-cookies">Cookie settings</a>
     </div>
   </footer>
+
+  </div><!-- /.bees-one-main-col -->
+  </div><!-- /.bees-one-app -->
 
   <!-- ORDER DETAIL DRAWER (non-modal side panel) -->
   <div id="drawerScrim" class="drawer-scrim" hidden onclick="closeDrawer()"></div>
@@ -1793,11 +1807,12 @@
   function showScreen() {
     const hash = location.hash || '#orders';
     const orderMatch = hash.match(/^#order\/(.+)$/);
-    const navO = document.getElementById('navOrdersLink');
-    const navH = document.getElementById('navHealthLink');
-    if (navO && navH) {
-      navO.classList.toggle('bees-nav-link--active', hash === '#orders' || !!orderMatch);
-      navH.classList.toggle('bees-nav-link--active', hash === '#health');
+    const railEdi = document.getElementById('railNavEdi');
+    const railHealth = document.getElementById('railNavHealth');
+    if (railEdi && railHealth) {
+      const onEdi = hash === '#orders' || !!orderMatch;
+      railEdi.classList.toggle('bees-one-rail__link--active', onEdi);
+      railHealth.classList.toggle('bees-one-rail__link--active', hash === '#health');
     }
 
     if (orderMatch) {
