@@ -416,49 +416,65 @@
         ? rawUrl.slice(0, hashIdx) + '?ht_preview=1' + rawUrl.slice(hashIdx)
         : rawUrl + '?ht_preview=1';
 
-      /* ── IMPORTANT: set render width BEFORE src so the prototype lays out
-         at desktop width. Without this the iframe uses its default ~300px
-         intrinsic width and scrollWidth is measured from that narrow render. ── */
-      var viewportEl  = document.getElementById('hm-viewport');
-      var available   = viewportEl.clientWidth - 2;
-      var renderWidth = Math.max(1280, available); /* at least 1280px desktop */
-      iframe.style.width  = renderWidth + 'px';
+      /* ── Determine the viewport width testers actually used ──────────────
+         Render the iframe at that exact width so the layout is identical to
+         what testers saw. Then place dots at raw pageX/pageY — no coordinate
+         normalisation needed because both spaces are now the same.
+         Use the MODE of stored vw values (most common tester viewport width).
+         Fall back to sw (scrollWidth) then 1280 for events recorded before
+         the vw field was added. ────────────────────────────────────────── */
+      var vwValues = clicks.map(function (e) {
+        return (e.position && (e.position.vw || e.position.sw)) || 1280;
+      }).filter(function (v) { return v > 0; });
+
+      var testerWidth = 1280;
+      if (vwValues.length) {
+        var freq = {};
+        vwValues.forEach(function (v) { freq[v] = (freq[v] || 0) + 1; });
+        testerWidth = parseInt(
+          Object.entries(freq).sort(function (a, b) { return b[1] - a[1]; })[0][0], 10
+        );
+      }
+
+      var viewportEl = document.getElementById('hm-viewport');
+      var available  = viewportEl.clientWidth - 2;
+
+      /* Set iframe width to TESTER width before loading so layout matches */
+      iframe.style.width  = testerWidth + 'px';
       iframe.style.height = '900px'; /* temporary — corrected after load */
 
       iframe.onload = function () {
-        /* Measure true page height now that the prototype rendered at full width */
-        var IW = renderWidth;
+        /* Measure true page height now that the prototype rendered at tester width */
         var IH = 900;
         try {
           var doc = iframe.contentDocument || iframe.contentWindow.document;
           IH = Math.max(doc.documentElement.scrollHeight, doc.body.scrollHeight, 400);
         } catch (_) { /* cross-origin fallback */ }
 
+        var IW = testerWidth;
         container.style.width  = IW + 'px';
         container.style.height = IH + 'px';
-        iframe.style.height = IH + 'px';
-        canvas.width  = IW;
-        canvas.height = IH;
-        canvas.style.width  = IW + 'px';
-        canvas.style.height = IH + 'px';
+        iframe.style.height    = IH + 'px';
+        canvas.width           = IW;
+        canvas.height          = IH;
+        canvas.style.width     = IW + 'px';
+        canvas.style.height    = IH + 'px';
 
-        /* Scale down to fit the available dashboard width (never upscale) */
+        /* Scale the whole container (iframe + canvas) to fit dashboard width.
+           Because layout matches tester viewport, dots need NO normalisation —
+           raw pageX/pageY land on the exact element the tester clicked. */
         var scale = Math.min(1, available / IW);
-        container.style.transform    = 'scale(' + scale + ')';
+        container.style.transform       = 'scale(' + scale + ')';
         container.style.transformOrigin = 'top left';
-        /* Collapse the dead layout space that transform: scale() leaves behind */
-        container.style.marginBottom = '-' + Math.floor(IH * (1 - scale)) + 'px';
-        /* Set viewport height to the visual (scaled) content height */
-        viewportEl.style.height      = Math.ceil(IH * scale) + 'px';
+        container.style.marginBottom    = '-' + Math.floor(IH * (1 - scale)) + 'px';
+        viewportEl.style.height         = Math.ceil(IH * scale) + 'px';
 
-        /* Normalise stored coordinates to canvas space */
+        /* Raw coordinates — no normalisation required */
         var scaled = clicks.map(function (e) {
           var pos  = e.position;
-          var sw   = pos.sw || IW;
-          var sh   = pos.sh || IH;
           var rawX = (pos.px != null) ? pos.px : pos.x;
           var rawY = (pos.py != null) ? pos.py : pos.y;
-          return { x: (rawX / sw) * IW, y: (rawY / sh) * IH };
+          return { x: rawX, y: rawY };
         });
 
         drawHeatmap(canvas, scaled);

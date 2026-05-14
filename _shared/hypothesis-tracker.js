@@ -211,6 +211,8 @@
       position: {
         x: e.clientX, y: e.clientY,                                            // viewport-relative (legacy)
         px: Math.round(e.pageX), py: Math.round(e.pageY),                      // document-relative (heatmap)
+        vw: window.innerWidth,                                                  // actual viewport width at click time
+        vh: window.innerHeight,                                                 // actual viewport height at click time
         sw: document.documentElement.scrollWidth,                               // page width at click time
         sh: document.documentElement.scrollHeight,                              // page height at click time
       },
